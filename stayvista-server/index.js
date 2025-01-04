@@ -95,7 +95,14 @@ async function run() {
     // Get the all rooms data
     app.get('/rooms', async (req, res) => {
       try {
-        const cursor = rooms.find();
+        const category = req.query?.category;
+        // initially value of vategory is String: null not 
+        let query = {};
+        if(category && category !== 'null'){
+          query = {category: category}
+        }
+
+        const cursor = rooms.find(query);
         const result = await cursor.toArray();
         res.send(result);
       } catch (error) {

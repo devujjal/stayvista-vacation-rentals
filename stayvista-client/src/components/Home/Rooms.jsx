@@ -4,15 +4,19 @@ import Card from './Card'
 import Container from '../Shared/Container'
 import Heading from '../Shared/Heading'
 import LoadingSpinner from '../Shared/LoadingSpinner'
+import { useSearchParams } from 'react-router'
 
 
 const Rooms = () => {
   const axiosPublic = useAxiosPublic();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryName = searchParams.get('category');  // 'category' mean that object property name And category have a initial value: 'null'
 
+  
   const { data: rooms = [], isError, error, isLoading } = useQuery({
-    queryKey: ['rooms'],
+    queryKey: ['rooms', categoryName],
     queryFn: async () => {
-      const res = await axiosPublic.get('/rooms');
+      const res = await axiosPublic.get(`/rooms?category=${categoryName}`);
       return res.data;
     }
   })
@@ -21,11 +25,11 @@ const Rooms = () => {
 
   if (isLoading) return <LoadingSpinner />
 
-  if(isError){
+  if (isError) {
     return <span>Error: {error.message}</span>
   }
 
-  
+
 
   return (
     <Container>
