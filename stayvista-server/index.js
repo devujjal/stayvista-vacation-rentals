@@ -3,7 +3,7 @@ const app = express()
 require('dotenv').config()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken')
 
 const port = process.env.PORT || 5000  //8000
@@ -97,6 +97,19 @@ async function run() {
       try {
         const cursor = rooms.find();
         const result = await cursor.toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
+    //Get individual Data
+    app.get('/rooms/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await rooms.findOne(query);
         res.send(result);
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
