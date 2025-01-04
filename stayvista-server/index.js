@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser')
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const jwt = require('jsonwebtoken')
 
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 5000  //8000
 
 // middleware
 const corsOptions = {
@@ -54,6 +54,10 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const database = client.db('stayvista');
+    const rooms = database.collection('rooms');
+
+
     // auth related api
     app.post('/jwt', async (req, res) => {
       const user = req.body
@@ -85,6 +89,21 @@ async function run() {
         res.status(500).send(err)
       }
     })
+
+
+
+    // Get the all rooms data
+    app.get('/rooms', async (req, res) => {
+      try {
+        const cursor = rooms.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
