@@ -1,11 +1,11 @@
-import Container from '../../components/Shared/Container'
-import { Helmet } from 'react-helmet-async'
-import RoomReservation from '../../components/RoomDetails/RoomReservation'
-import Heading from '../../components/Shared/Heading'
-import { useParams } from 'react-router'
-import useAxiosPublic from '../../hooks/useAxiosPublic'
-import { useQuery } from '@tanstack/react-query'
-import LoadingSpinner from '../../components/Shared/LoadingSpinner'
+import Container from '../../components/Shared/Container';
+import { Helmet } from 'react-helmet-async';
+import RoomReservation from '../../components/RoomDetails/RoomReservation';
+import Heading from '../../components/Shared/Heading';
+import { useParams } from 'react-router';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
+import { useQuery } from '@tanstack/react-query';
+import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 
 
 const RoomDetails = () => {
@@ -52,6 +52,7 @@ const RoomDetails = () => {
           </div>
           <div className='grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6'>
             {/* Room Info */}
+          
             <div className='col-span-4 flex flex-col gap-8'>
               <div className='flex flex-col gap-2'>
                 <div
