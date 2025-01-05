@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router'
 
 const Rooms = () => {
   const axiosPublic = useAxiosPublic();
+  // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryName = searchParams.get('category');  // 'category' mean that object property name And category have a initial value: 'null'
 

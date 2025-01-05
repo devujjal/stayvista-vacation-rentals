@@ -1,7 +1,72 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FcGoogle } from 'react-icons/fc'
+import toast from 'react-hot-toast';
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import useAuth from "../../hooks/useAuth";
+import { ImSpinner9 } from "react-icons/im";
+import { useState } from "react";
+
+const fetchURL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API}`
 
 const SignUp = () => {
+  const axiosPublic = useAxiosPublic();
+  const { createUser, updateUserProfile, signInWithGoogle } = useAuth();
+  const navgigate = useNavigate();
+  // We could use loading from AuthProvider, but if we use it, we face a problem. For example, when the page refreshes, the loading process runs immediately.
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const imageFile = form.image.files[0]
+
+    const formData = new FormData();
+    formData.append('image', imageFile)
+
+    try {
+      setIsLoading(true);
+
+      const res = await axiosPublic.post(fetchURL, formData);
+      const imageURL = res.data?.data?.display_url;
+
+      if (res.data?.success) {
+        const userCredential = await createUser(email, password);
+        console.log(userCredential.user)
+        if (userCredential.user) {
+          await updateUserProfile(name, imageURL);
+          // await logOut();
+          setIsLoading(false);
+          toast.success('Successfully Logged In!')
+          navgigate('/');
+        }
+      }
+
+
+    } catch (error) {
+      toast.error(error.message)
+    }
+
+  }
+
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true)
+      await signInWithGoogle();
+
+      navgigate('/')
+      toast.success('Successfully Logged In!')
+      setIsLoading(false)
+
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+
   return (
     <div className='flex justify-center items-center min-h-screen'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
@@ -10,8 +75,7 @@ const SignUp = () => {
           <p className='text-sm text-gray-400'>Welcome to StayVista</p>
         </div>
         <form
-          noValidate=''
-          action=''
+          onSubmit={handleFormSubmit}
           className='space-y-6 ng-untouched ng-pristine ng-valid'
         >
           <div className='space-y-4'>
@@ -74,10 +138,13 @@ const SignUp = () => {
 
           <div>
             <button
+              disabled={isLoading}
               type='submit'
-              className='bg-rose-500 w-full rounded-md py-3 text-white'
+              className='disabled:cursor-not-allowed cursor-pointer bg-rose-500 w-full rounded-md py-3 text-white'
             >
-              Continue
+              {
+                isLoading ? <ImSpinner9 className="m-auto animate-spin" /> : 'Continue'
+              }
             </button>
           </div>
         </form>
@@ -88,11 +155,14 @@ const SignUp = () => {
           </p>
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
-        <div className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
+        <button
+          disabled={isLoading}
+          onClick={handleGoogleSignIn}
+          className='disabled:cursor-not-allowed flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
           <FcGoogle size={32} />
 
           <p>Continue with Google</p>
-        </div>
+        </button>
         <p className='px-6 text-sm text-center text-gray-400'>
           Already have an account?{' '}
           <Link

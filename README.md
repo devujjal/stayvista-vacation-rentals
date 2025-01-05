@@ -15,7 +15,7 @@
 - [react-helmet-async](https://www.npmjs.com/package/react-helmet-async)
 - [react-hot-toast](https://www.npmjs.com/package/react-hot-toast)
 - [react-icons](https://www.npmjs.com/package/react-icons)
-- [react-router-dom](https://www.npmjs.com/package/react-router-dom)
+- [react-router](https://reactrouter.com/)
 - [react-spinners](https://www.npmjs.com/package/react-spinners)
 - [@stripe/stripe-js](https://www.npmjs.com/package/@stripe/stripe-js)
 - [firebase](https://www.npmjs.com/package/firebase)

@@ -12,7 +12,6 @@ const RoomDetails = () => {
 
   const { id } = useParams();
   const axiosPublic = useAxiosPublic();
-  console.log(id)
 
   const { data: room = {}, isError, error, isLoading } = useQuery({
     queryKey: ['room'],

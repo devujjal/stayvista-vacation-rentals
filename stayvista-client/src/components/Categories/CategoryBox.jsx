@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 
 
 const CategoryBox = ({ label, icon: Icon }) => {
+  // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate()
 
