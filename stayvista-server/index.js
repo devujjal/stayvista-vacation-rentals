@@ -58,6 +58,7 @@ async function run() {
     const rooms = database.collection('rooms');
 
 
+
     // auth related api
     app.post('/jwt', async (req, res) => {
       const user = req.body
@@ -72,6 +73,7 @@ async function run() {
         })
         .send({ success: true })
     })
+
 
 
     // Logout
@@ -111,6 +113,7 @@ async function run() {
     })
 
 
+
     //Get individual Data
     app.get('/rooms/:id', async (req, res) => {
       try {
@@ -122,6 +125,23 @@ async function run() {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
       }
     })
+
+
+
+    //Get the host's room for each individual person
+    app.get('/rooms/:email', async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { 'host.email': email };
+        const result = await rooms.find(query).toArray();
+        res.send(result)
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
 
     //Insert a new Room
     app.post('/rooms', async (req, res) => {
