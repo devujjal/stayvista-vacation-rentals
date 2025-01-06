@@ -6,6 +6,7 @@ import AddRoomForm from "../../components/Form/AddRoomForm";
 import toast from "react-hot-toast";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import useAuth from "../../hooks/useAuth";
+import { Helmet } from 'react-helmet-async'
 
 
 const AddRoom = () => {
@@ -113,6 +114,9 @@ const AddRoom = () => {
     return (
 
         <>
+            <Helmet>
+                <title>Add Room - StayVista</title>
+            </Helmet>
 
             <AddRoomForm
                 dates={dates}

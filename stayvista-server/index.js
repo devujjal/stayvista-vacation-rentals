@@ -129,13 +129,12 @@ async function run() {
 
 
     //Get the host's room for each individual person
-    app.get('/rooms/:email', async (req, res) => {
+    app.get('/my-listing/:email', async (req, res) => {
       try {
         const email = req.params.email;
         const query = { 'host.email': email };
         const result = await rooms.find(query).toArray();
-        res.send(result)
-
+        res.send(result);
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
       }

@@ -5,9 +5,10 @@ import { useNavigate } from "react-router";
 
 export const axiosSecure = axios.create({
   baseURL: 'http://localhost:5000',
-  withCredentials: true,
+  // withCredentials: true,
 })
 const useAxiosSecure = () => {
+  /* 
   const { logOut } = useAuth()
   const navigate = useNavigate()
 
@@ -26,7 +27,7 @@ const useAxiosSecure = () => {
         return Promise.reject(error)
       }
     )
-  }, [logOut, navigate])
+  }, [logOut, navigate]) */
 
   return axiosSecure
 }
