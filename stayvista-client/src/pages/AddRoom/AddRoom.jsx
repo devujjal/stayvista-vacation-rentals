@@ -1,14 +1,22 @@
 import { useState } from "react";
+import { useMutation } from '@tanstack/react-query'
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useNavigate } from "react-router";
 import AddRoomForm from "../../components/Form/AddRoomForm";
 import toast from "react-hot-toast";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
+import useAuth from "../../hooks/useAuth";
 
 
 const AddRoom = () => {
 
+    const { user } = useAuth();
     const axiosPublic = useAxiosPublic();
+    const axiosSecure = useAxiosSecure();
     const [file, setFile] = useState();
     const [preText, setPreText] = useState();
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate();
     const [dates, setDates] = useState([
         {
             startDate: new Date(),
@@ -17,10 +25,25 @@ const AddRoom = () => {
         }
     ]);
 
+    const { mutateAsync } = useMutation({
+        mutationFn: async (roomItem) => {
+            const res = await axiosSecure.post('/rooms', roomItem);
+            return res.data;
+        },
+        onSuccess: () => {
+            setIsLoading(false)
+            toast.success('Room Added Successfully!');
+            navigate('/dashboard/my-listings')
+        }
+
+    })
+
 
 
     const handleFormSubmit = async (e) => {
         e.preventDefault()
+        setIsLoading(true)
+
         const form = e.target;
         const title = form.title.value;
         const location = form.location.value;
@@ -44,7 +67,7 @@ const AddRoom = () => {
             const imageURL = res.data.data.display_url
 
             if (res?.data?.success) {
-                const roomDetails = {
+                const roomItem = {
                     title,
                     location,
                     category,
@@ -55,15 +78,25 @@ const AddRoom = () => {
                     totalGuest,
                     bedRooms,
                     bathRooms,
-                    description
+                    description,
+                    host: {
+                        name: user?.displayName,
+                        email: user?.email,
+                        image: user?.photoURL
+                    }
                 }
 
-                console.log(roomDetails)
+                console.log(roomItem)
+
+                // Post request to server using useMutation
+                await mutateAsync(roomItem);
+
 
             }
 
         } catch (error) {
             toast.error(error.message)
+            setIsLoading(false)
         }
 
 
@@ -80,7 +113,6 @@ const AddRoom = () => {
     return (
 
         <>
-            <span>{preText}</span>
 
             <AddRoomForm
                 dates={dates}
@@ -89,6 +121,7 @@ const AddRoom = () => {
                 file={file}
                 preText={preText}
                 handleImage={handleImage}
+                isLoading={isLoading}
             />
         </>
     )

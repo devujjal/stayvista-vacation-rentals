@@ -1,9 +1,19 @@
 import { categories } from '../../components/Categories/CategoriesData';
 import { DateRange } from 'react-date-range';
 import PropTypes from 'prop-types';
+import { ImSpinner9 } from 'react-icons/im';
 
 
-const AddRoomForm = ({ dates, setDates, handleFormSubmit, file, preText, handleImage }) => {
+const AddRoomForm = ({
+    dates,
+    setDates,
+    handleFormSubmit,
+    file,
+    preText,
+    handleImage,
+    isLoading
+
+}) => {
 
 
     return (
@@ -184,7 +194,9 @@ const AddRoomForm = ({ dates, setDates, handleFormSubmit, file, preText, handleI
                     type='submit'
                     className='w-full p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-rose-500'
                 >
-                    Save & Continue
+                    {
+                        isLoading ? <ImSpinner9 className="m-auto animate-spin" /> : 'Save & Continue'
+                    }
                 </button>
             </form>
         </div>
@@ -197,7 +209,8 @@ AddRoomForm.propTypes = {
     handleFormSubmit: PropTypes.func,
     file: PropTypes.string,
     preText: PropTypes.string,
-    handleImage: PropTypes.func
+    handleImage: PropTypes.func,
+    isLoading: PropTypes.bool
 }
 
 export default AddRoomForm;

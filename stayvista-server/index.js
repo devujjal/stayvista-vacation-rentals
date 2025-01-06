@@ -98,8 +98,8 @@ async function run() {
         const category = req.query?.category;
         // initially value of vategory is String: null not 
         let query = {};
-        if(category && category !== 'null'){
-          query = {category: category}
+        if (category && category !== 'null') {
+          query = { category: category }
         }
 
         const cursor = rooms.find(query);
@@ -118,6 +118,17 @@ async function run() {
         const query = { _id: new ObjectId(id) };
         const result = await rooms.findOne(query);
         res.send(result);
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+    //Insert a new Room
+    app.post('/rooms', async (req, res) => {
+      try {
+        const body = req.body;
+        const result = await rooms.insertOne(body);
+        res.send(result)
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
       }
