@@ -3,8 +3,7 @@ import { DateRange } from 'react-date-range';
 import PropTypes from 'prop-types';
 
 
-const AddRoomForm = ({ dates, setDates, handleFormSubmit }) => {
-
+const AddRoomForm = ({ dates, setDates, handleFormSubmit, file, preText, handleImage }) => {
 
 
     return (
@@ -36,6 +35,7 @@ const AddRoomForm = ({ dates, setDates, handleFormSubmit }) => {
                                 required
                                 className='w-full px-4 py-3 border-rose-300 focus:outline-rose-500 rounded-md'
                                 name='category'
+                                id='category'
                             >
                                 {categories.map(category => (
                                     <option value={category.label} key={category.label}>
@@ -75,10 +75,11 @@ const AddRoomForm = ({ dates, setDates, handleFormSubmit }) => {
                         </div>
 
                         <div className=' p-4 bg-white w-full  m-auto rounded-lg'>
-                            <div className='file_upload px-5 py-3 relative border-4 border-dotted border-gray-300 rounded-lg'>
-                                <div className='flex flex-col w-max mx-auto text-center'>
+                            <div className='file_upload px-5 py-3 relative flex items-center border-4 border-dotted border-gray-300 rounded-lg'>
+                                <div className='flex flex-col items-center w-max mx-auto text-center'>
                                     <label>
                                         <input
+                                            onChange={(e) => handleImage(e.target.files[0])}
                                             className='text-sm cursor-pointer w-36 hidden'
                                             type='file'
                                             name='image'
@@ -86,11 +87,23 @@ const AddRoomForm = ({ dates, setDates, handleFormSubmit }) => {
                                             accept='image/*'
                                             hidden
                                         />
+
                                         <div className='bg-rose-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-rose-500'>
-                                            Upload Image
+
+                                            {
+                                                preText ? preText : 'Upload Image'
+                                            }
+
+
                                         </div>
                                     </label>
                                 </div>
+
+                                {
+                                    file && <img src={file} alt="" className='h-14 w-14' />
+
+                                }
+
                             </div>
                         </div>
                         <div className='flex justify-between gap-2'>
@@ -181,7 +194,10 @@ const AddRoomForm = ({ dates, setDates, handleFormSubmit }) => {
 AddRoomForm.propTypes = {
     setDates: PropTypes.func,
     dates: PropTypes.array,
-    handleFormSubmit: PropTypes.func
+    handleFormSubmit: PropTypes.func,
+    file: PropTypes.string,
+    preText: PropTypes.string,
+    handleImage: PropTypes.func
 }
 
 export default AddRoomForm;

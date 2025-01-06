@@ -7,6 +7,8 @@ import useAxiosPublic from "../../hooks/useAxiosPublic";
 const AddRoom = () => {
 
     const axiosPublic = useAxiosPublic();
+    const [file, setFile] = useState();
+    const [preText, setPreText] = useState();
     const [dates, setDates] = useState([
         {
             startDate: new Date(),
@@ -34,7 +36,6 @@ const AddRoom = () => {
 
         const formData = new FormData();
         formData.append('image', image)
-
 
 
         try {
@@ -69,13 +70,25 @@ const AddRoom = () => {
     }
 
 
+    const handleImage = (image) => {
+        setFile(URL.createObjectURL(image));
+        setPreText(image.name)
+    }
+
+
 
     return (
+
         <>
+            <span>{preText}</span>
+
             <AddRoomForm
                 dates={dates}
                 setDates={setDates}
                 handleFormSubmit={handleFormSubmit}
+                file={file}
+                preText={preText}
+                handleImage={handleImage}
             />
         </>
     )
