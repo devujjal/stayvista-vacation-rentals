@@ -30,21 +30,21 @@ export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
   { path: '/signup', element: <SignUp /> },
   {
-    path:'/dashboard',
+    path: '/dashboard',
     element: <Dashboard />,
     children: [
-     {
-      index: true,
-      element: <Statistics />
-     },
-     {
-      path: 'add-room',
-      element: <AddRoom />
-     },
-     {
-      path: 'my-listings',
-      element: <MyListings />
-     }
+      {
+        index: true,
+        element: <Statistics />
+      },
+      {
+        path: 'add-room',
+        element: <AddRoom />
+      },
+      {
+        path: 'my-listings',
+        element: <MyListings />
+      }
     ]
   },
 ])
