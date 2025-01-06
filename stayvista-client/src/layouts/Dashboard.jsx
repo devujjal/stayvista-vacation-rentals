@@ -1,10 +1,11 @@
 import { Outlet } from "react-router";
+import SideBar from "../components/SideBar/SideBar";
 
 const Dashboard = () => {
     return (
         <div className="relative min-h-screen md:flex">
-            <h1>hello</h1>
-            
+            <SideBar />
+
             {/* Dynamic Content */}
             <main className="flex-1 md:ml-64">
                 <div className="p-5">
