@@ -1,15 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import RoomRowsData from "../../components/TableRows/RoomRowsData";
+import toast from 'react-hot-toast';
+import LoadingSpinner from "../../components/Shared/LoadingSpinner";
+
 
 const MyListings = () => {
 
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    const { data: rooms = [] } = useQuery({
+    const { data: rooms = [], isLoading, isError, error, refetch } = useQuery({
         queryKey: ['myListing', user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
@@ -17,6 +20,40 @@ const MyListings = () => {
             return res.data;
         }
     })
+
+
+    const { mutateAsync } = useMutation({
+        mutationFn: async (id) => {
+            const res = await axiosSecure.delete(`/room/${id}`);
+            return res.data;
+        },
+        onSuccess: (data) => {
+            console.log(data);
+            refetch();
+            toast.success('Successfully Deleted!');
+        }
+    })
+
+
+    const handleDelete = async (id) => {
+        // console.log(id)
+        try {
+            await mutateAsync(id)
+        } catch (error) {
+            toast.error(error.message)
+        }
+
+
+    }
+
+
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+    if (isError) {
+        return toast.error(error.message)
+    }
 
 
 
@@ -81,7 +118,7 @@ const MyListings = () => {
                                     {/* Room row data */}
 
                                     {
-                                        rooms.map(room => <RoomRowsData key={room._id} room={room} />)
+                                        rooms.map(room => <RoomRowsData key={room._id} room={room} handleDelete={handleDelete} id={room?._id} />)
                                     }
                                 </tbody>
                             </table>
