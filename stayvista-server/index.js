@@ -93,17 +93,26 @@ async function run() {
     })
 
 
+
     // Saved user in DB
     app.put('/user', async (req, res) => {
       try {
         const user = req.body;
-        console.log(user)
         const query = { email: user?.email }
+        // check if user already exists in db
         const isExsit = await users.findOne(query);
+
         if (isExsit) {
-          return res.send({ message: "Already Exsit" })
+          if (user.status === 'Requested') {
+            // if existing user try to change his role
+            const result = await users.updateOne(query, { $set: { status: user?.status } });
+            return res.send(result);
+          } else {
+            return res.send(isExsit)
+          }
         }
 
+        // save user for the first time
         const options = { upsert: true };
         const updatedDoc = {
           $set: {
@@ -119,6 +128,7 @@ async function run() {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
       }
     })
+
 
 
     // Get the all rooms data
