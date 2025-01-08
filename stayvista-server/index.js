@@ -153,6 +153,18 @@ async function run() {
       }
     })
 
+    // Delete Room
+    app.delete('/room/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await rooms.deleteOne(query);
+        res.send(result)
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
 
 
     // Send a ping to confirm a successful connection
