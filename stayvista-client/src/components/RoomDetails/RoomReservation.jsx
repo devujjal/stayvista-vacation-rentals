@@ -4,18 +4,28 @@ import Button from '../Shared/Button/Button'
 import { useState } from 'react';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import { differenceInCalendarDays } from 'date-fns';
 
 const RoomReservation = ({ room }) => {
 
+  console.log(room)
+
   const [state, setState] = useState([
     {
-      startDate: new Date(),
-      endDate: null,
+      startDate: new Date(room?.from),
+      endDate: new Date(room?.to),
       key: 'selection'
     }
   ]);
 
-  
+
+  const totalPrice =
+  parseInt(differenceInCalendarDays(new Date(room.to), new Date(room.from))) *
+  room?.price
+
+  console.log(totalPrice)
+
+
   return (
     <div className='rounded-xl border-[1px] border-neutral-200 overflow-hidden bg-white'>
       <div className='flex items-center gap-1 p-4'>
@@ -30,7 +40,14 @@ const RoomReservation = ({ room }) => {
           showDateDisplay={false}
           rangeColors={['#EE3E5E']}
           editableDateInputs={true}
-          onChange={item => setState([item.selection])}
+          // eslint-disable-next-line no-unused-vars
+          onChange={item => setState([
+            {
+              startDate: new Date(room?.from),
+              endDate: new Date(room?.to),
+              key: 'selection'
+            }
+          ])}
           moveRangeOnFirstSelection={false}
           ranges={state}
         />
@@ -42,7 +59,7 @@ const RoomReservation = ({ room }) => {
       <hr />
       <div className='p-4 flex items-center justify-between font-semibold text-lg'>
         <div>Total</div>
-        <div>${room?.price}</div>
+        <div>${totalPrice}</div>
       </div>
     </div>
   )

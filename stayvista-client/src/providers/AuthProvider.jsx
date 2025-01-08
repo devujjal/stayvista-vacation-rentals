@@ -19,7 +19,7 @@ const googleProvider = new GoogleAuthProvider()
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   const createUser = (email, password) => {
     setLoading(true);
@@ -65,22 +65,43 @@ const AuthProvider = ({ children }) => {
   //   return data
   // }
 
+
+  //Saved User in db
+  const savedUser = async (userInfo) => {
+    try {
+      const newUser = {
+        email: userInfo?.email,
+        role: 'guest',
+        status: 'Verified',
+      };
+
+      const res = await axios.put('http://localhost:5000/user', newUser)
+      return res.data;
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   // onAuthStateChange
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, currentUser => {
-      setUser(currentUser)
-      setLoading(false)
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
 
-      // if (currentUser) {
-      //   getToken(currentUser.email)
-      // }
-      // setLoading(false)
-    })
+      setUser(currentUser);
+      setLoading(false);
+
+      if (currentUser) {
+        savedUser(currentUser)
+      }
+
+    });
 
     return () => {
-      return unsubscribe()
-    }
-  }, [])
+      unsubscribe();
+    };
+  }, []);
+
 
   const authInfo = {
     user,

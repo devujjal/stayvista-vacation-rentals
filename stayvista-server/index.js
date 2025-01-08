@@ -56,6 +56,7 @@ async function run() {
 
     const database = client.db('stayvista');
     const rooms = database.collection('rooms');
+    const users = database.collection('users');
 
 
 
@@ -75,7 +76,6 @@ async function run() {
     })
 
 
-
     // Logout
     app.get('/logout', async (req, res) => {
       try {
@@ -92,6 +92,33 @@ async function run() {
       }
     })
 
+
+    // Saved user in DB
+    app.put('/user', async (req, res) => {
+      try {
+        const user = req.body;
+        console.log(user)
+        const query = { email: user?.email }
+        const isExsit = await users.findOne(query);
+        if (isExsit) {
+          return res.send({ message: "Already Exsit" })
+        }
+
+        const options = { upsert: true };
+        const updatedDoc = {
+          $set: {
+            ...user,
+            timestamp: Date.now()
+          }
+        }
+
+        const result = await users.updateOne(query, updatedDoc, options);
+        res.send(result)
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
 
 
     // Get the all rooms data
