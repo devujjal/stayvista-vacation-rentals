@@ -136,6 +136,7 @@ UpdateUserModal.propTypes = {
     modalHandler: PropTypes.func,
     setIsOpen: PropTypes.func,
     isOpen: PropTypes.bool,
+    
 }
 
 export default UpdateUserModal
