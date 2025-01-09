@@ -31,7 +31,6 @@ const UserDataRow = ({ user, refetch }) => {
             return setIsOpen(false);
         }
 
-
         try {
             const newRole = {
                 role: selected,
