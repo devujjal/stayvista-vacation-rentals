@@ -1,21 +1,20 @@
 import { useState } from 'react'
 import { GrLogout } from 'react-icons/gr'
 import { FcSettings } from 'react-icons/fc'
-import { BsFillHouseAddFill } from 'react-icons/bs'
 import { AiOutlineBars } from 'react-icons/ai'
 import { BsGraphUp } from 'react-icons/bs'
-import { MdHomeWork } from 'react-icons/md'
 import useAuth from '../../hooks/useAuth'
 import { Link, NavLink } from 'react-router'
 import useRole from '../../hooks/useRole'
 import MenuItem from '../Menu/MenuItem'
+import HostMenu from '../Menu/HostMenu'
+import GuestMenu from '../Menu/GuestMenu'
+import AdminMenu from '../Menu/AdminMenu'
 
 const SideBar = () => {
     const { logOut } = useAuth();
     const [isActive, setActive] = useState(false);
     const [role] = useRole();
-
-    console.log(role)
 
     // Sidebar Responsive Handler
     const handleToggle = () => {
@@ -77,11 +76,12 @@ const SideBar = () => {
                             {/* Statistics */}
                             <MenuItem label={'Statistics'} address={'/dashboard'} icon={BsGraphUp} />
 
-                            {/* Add Room */}
-                            <MenuItem label={'Add Room'} address={'add-room'} icon={BsFillHouseAddFill} />
+                            {role?.role === 'guest' && <GuestMenu />}
+                            {role?.role === 'host' && <HostMenu />}
+                            {role?.role === 'admin' && <AdminMenu />}
 
-                            {/* My Listing */}
-                            <MenuItem label={'My Listings'} address={'my-listings'} icon={MdHomeWork} />
+                            <AdminMenu />
+
 
                         </nav>
                     </div>

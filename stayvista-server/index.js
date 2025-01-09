@@ -143,6 +143,18 @@ async function run() {
       }
     })
 
+    // Get all the users
+    app.get('/users', async (req, res) => {
+      try {
+        const cursor = users.find();
+        const result = await cursor.toArray();
+        res.send(result)
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
 
 
     // Get the all rooms data
