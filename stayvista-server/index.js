@@ -130,6 +130,20 @@ async function run() {
     })
 
 
+    //Get the user status
+    app.get('/user/:email', async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { email: email };
+        const result = await users.findOne(query);
+        res.send(result)
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
 
     // Get the all rooms data
     app.get('/rooms', async (req, res) => {
