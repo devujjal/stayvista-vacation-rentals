@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
 import UserDataRow from '../../../components/TableRows/UserDataRow';
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure();
@@ -14,7 +15,10 @@ const ManageUsers = () => {
         }
     })
 
-    console.log(users)
+    
+    if(isLoading){
+        return <LoadingSpinner />
+    }
 
 
     return (

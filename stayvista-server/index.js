@@ -143,11 +143,34 @@ async function run() {
       }
     })
 
+
     // Get all the users
     app.get('/users', async (req, res) => {
       try {
         const cursor = users.find();
         const result = await cursor.toArray();
+        res.send(result)
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
+    //Update the user role
+    app.patch('/user/update/:email', async (req, res) => {
+      try {
+        const email = req.params.email;
+        const user = req.body;
+        const filter = { email: email };
+        const updatedDoc = {
+          $set: {
+            ...user,
+            timestamp: Date.now()
+          }
+        }
+
+        const result = await users.updateOne(filter, updatedDoc);
         res.send(result)
 
       } catch (error) {

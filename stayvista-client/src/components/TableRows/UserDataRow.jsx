@@ -4,30 +4,49 @@ import { useState } from 'react'
 import toast from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import useAuth from '../../hooks/useAuth';
 
 const UserDataRow = ({ user, refetch }) => {
+    const { user: loggedInUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const axiosSecure = useAxiosSecure();
 
     const { mutateAsync } = useMutation({
         mutationFn: async (newRole) => {
-            // const res = await axiosSecure.put(`/`)
+            const res = await axiosSecure.patch(`/user/update/${user?.email}`, newRole);
+            return res.data;
+        },
+        onSuccess: (data) => {
+            console.log(data)
+            refetch();
+            toast.success('Successfully Updated!')
+            setIsOpen(false)
+
         }
     })
 
     const modalHandler = async (selected) => {
-        console.log(selected)
+        if (loggedInUser?.email === user?.email) {
+            toast.error('Action Not Allowed');
+            return setIsOpen(false);
+        }
+
+
         try {
             const newRole = {
                 role: selected,
                 status: 'verified'
-            }
+            };
+
+            await mutateAsync(newRole);
 
         } catch (error) {
-            toast.error(error?.message)
+            toast.error(error?.message);
         }
 
     }
+
+
     return (
         <tr>
             <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>

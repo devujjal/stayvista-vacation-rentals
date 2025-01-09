@@ -80,8 +80,6 @@ const SideBar = () => {
                             {role?.role === 'host' && <HostMenu />}
                             {role?.role === 'admin' && <AdminMenu />}
 
-                            <AdminMenu />
-
 
                         </nav>
                     </div>
