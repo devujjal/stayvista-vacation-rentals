@@ -5,11 +5,12 @@ import { useState } from 'react';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { differenceInCalendarDays } from 'date-fns';
+import BookingModal from '../Modal/BookingModal';
 
 const RoomReservation = ({ room }) => {
 
   console.log(room)
-
+  const [isOpen, setIsOpen] = useState(false);
   const [state, setState] = useState([
     {
       startDate: new Date(room?.from),
@@ -18,12 +19,17 @@ const RoomReservation = ({ room }) => {
     }
   ]);
 
+  const closeModal = () => {
+    setIsOpen(false)
+  }
 
   const totalPrice =
-  parseInt(differenceInCalendarDays(new Date(room.to), new Date(room.from))) *
-  room?.price
+    parseInt(differenceInCalendarDays(new Date(room.to), new Date(room.from))) *
+    room?.price
 
   console.log(totalPrice)
+
+
 
 
   return (
@@ -54,8 +60,14 @@ const RoomReservation = ({ room }) => {
       </div>
       <hr />
       <div className='p-4'>
-        <Button label={'Reserve'} />
+        <Button label={'Reserve'} onClick={() => setIsOpen(true)} />
       </div>
+
+
+      {/* Modal */}
+      <BookingModal isOpen={isOpen} closeModal={closeModal} bookingInfo={room} totalPrice={totalPrice} />
+
+
       <hr />
       <div className='p-4 flex items-center justify-between font-semibold text-lg'>
         <div>Total</div>
