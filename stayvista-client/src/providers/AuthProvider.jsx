@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types'
-import { createContext, useEffect, useState } from 'react'
+import PropTypes from 'prop-types';
+import { createContext, useEffect, useState } from 'react';
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -10,16 +10,17 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
-} from 'firebase/auth'
-import { app } from '../firebase/firebase.config'
-import axios from 'axios'
-export const AuthContext = createContext(null)
-const auth = getAuth(app)
-const googleProvider = new GoogleAuthProvider()
+} from 'firebase/auth';
+import { app } from '../firebase/firebase.config';
+import axios from 'axios';
+export const AuthContext = createContext(null);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true);
+
 
   const createUser = (email, password) => {
     setLoading(true);
@@ -57,12 +58,13 @@ const AuthProvider = ({ children }) => {
   }
   // Get token from server
   // const getToken = async email => {
-  //   const { data } = await axios.post(
-  //     `${import.meta.env.VITE_API_URL}/jwt`,
-  //     { email },
-  //     { withCredentials: true }
-  //   )
-  //   return data
+  //   try {
+
+  //     const res = await axiosSecure.post('/jwt', { email })
+  //     return res.data;
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
   // }
 
 
@@ -75,7 +77,9 @@ const AuthProvider = ({ children }) => {
         status: 'Verified',
       };
 
-      const res = await axios.put('http://localhost:5000/user', newUser)
+      const res = await axios.put('http://localhost:5000/user', newUser, {
+        withCredentials: true
+      })
       return res.data;
 
     } catch (error) {
@@ -86,13 +90,22 @@ const AuthProvider = ({ children }) => {
 
   // onAuthStateChange
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      const userEmail = currentUser?.email || user?.email;
       setUser(currentUser);
       setLoading(false);
 
       if (currentUser) {
-        savedUser(currentUser)
+
+        await axios.post('http://localhost:5000/jwt', { email: userEmail }, {
+          withCredentials: true
+        });
+        await savedUser(currentUser);
+      }
+      else {
+        await axios.post('http://localhost:5000/logout', { email: userEmail }, {
+          withCredentials: true
+        })
       }
 
     });
@@ -100,7 +113,7 @@ const AuthProvider = ({ children }) => {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [user?.email]);
 
 
   const authInfo = {

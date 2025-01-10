@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000  //8000
 
 // middleware
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  origin: ['http://localhost:5173'],
   credentials: true,
   optionSuccessStatus: 200,
 }
@@ -77,7 +77,7 @@ async function run() {
 
 
     // Logout
-    app.get('/logout', async (req, res) => {
+    app.post('/logout', async (req, res) => {
       try {
         res
           .clearCookie('token', {
@@ -95,9 +95,16 @@ async function run() {
 
 
     // Saved user in DB
-    app.put('/user', async (req, res) => {
+    app.put('/user', verifyToken, async (req, res) => {
       try {
         const user = req.body;
+
+        const decoded = req.user.email;
+        if (decoded !== user?.email) {
+          return res.status(403).send({ message: 'Forbidden Access' })
+        }
+
+
         const query = { email: user?.email }
         // check if user already exists in db
         const isExsit = await users.findOne(query);
@@ -131,8 +138,13 @@ async function run() {
 
 
     //Get the user status
-    app.get('/user/:email', async (req, res) => {
+    app.get('/user/:email', verifyToken, async (req, res) => {
       try {
+        const decoded = req.user.email;
+        if (decoded !== req.params.email) {
+          return res.status(403).send({ message: "Forbidden Access!" })
+        }
+
         const email = req.params.email;
         const query = { email: email };
         const result = await users.findOne(query);
@@ -145,7 +157,7 @@ async function run() {
 
 
     // Get all the users
-    app.get('/users', async (req, res) => {
+    app.get('/users', verifyToken, async (req, res) => {
       try {
         const cursor = users.find();
         const result = await cursor.toArray();
@@ -158,7 +170,7 @@ async function run() {
 
 
     //Update the user role
-    app.patch('/user/update/:email', async (req, res) => {
+    app.patch('/user/update/:email', verifyToken, async (req, res) => {
       try {
         const email = req.params.email;
         const user = req.body;
@@ -215,8 +227,13 @@ async function run() {
 
 
     //Get the host's room for each individual person
-    app.get('/my-listing/:email', async (req, res) => {
+    app.get('/my-listing/:email', verifyToken, async (req, res) => {
       try {
+        const decoded = req.user.email;
+        if (decoded !== req.params.email) {
+          return res.status(403).send({ message: 'Forbidden Access!' })
+        }
+
         const email = req.params.email;
         const query = { 'host.email': email };
         const result = await rooms.find(query).toArray();
@@ -229,7 +246,7 @@ async function run() {
 
 
     //Insert a new Room
-    app.post('/rooms', async (req, res) => {
+    app.post('/rooms', verifyToken, async (req, res) => {
       try {
         const body = req.body;
         const result = await rooms.insertOne(body);
@@ -240,7 +257,7 @@ async function run() {
     })
 
     // Delete Room
-    app.delete('/room/:id', async (req, res) => {
+    app.delete('/room/:id', verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
