@@ -59,6 +59,22 @@ async function run() {
     const users = database.collection('users');
 
 
+    const verifyAdmin = async (req, res, next) => {
+      try {
+        const email = req.user.email;
+        const query = { email: email };
+        const user = await users.findOne(query);
+        if (!user || user?.role !== 'admin') {
+          return res.status(403).send({ message: 'Forbidden Access' })
+        }
+
+        next();
+
+      } catch (error) {
+        res.status(500).send({ message: 'Internal Server Error' });
+      }
+    }
+
 
     // auth related api
     app.post('/jwt', async (req, res) => {
@@ -157,7 +173,7 @@ async function run() {
 
 
     // Get all the users
-    app.get('/users', verifyToken, async (req, res) => {
+    app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
       try {
         const cursor = users.find();
         const result = await cursor.toArray();
@@ -170,7 +186,7 @@ async function run() {
 
 
     //Update the user role
-    app.patch('/user/update/:email', verifyToken, async (req, res) => {
+    app.patch('/user/update/:email', verifyToken, verifyAdmin, async (req, res) => {
       try {
         const email = req.params.email;
         const user = req.body;
