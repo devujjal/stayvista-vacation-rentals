@@ -6,8 +6,12 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/react'
+import { Elements } from "@stripe/react-stripe-js";
 import { format } from 'date-fns'
-import { Fragment } from 'react'
+import { Fragment } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY);
 
 const BookingModal = ({ closeModal, isOpen, bookingInfo, totalPrice }) => {
     return (
@@ -72,6 +76,9 @@ const BookingModal = ({ closeModal, isOpen, bookingInfo, totalPrice }) => {
                                 </div>
                                 <hr className='mt-8 ' />
                                 {/* checkout form */}
+                                <Elements stripe={stripePromise}>
+
+                                </Elements>
                                 <div className='flex mt-2 justify-around'>
                                     <button
                                         type='button'
