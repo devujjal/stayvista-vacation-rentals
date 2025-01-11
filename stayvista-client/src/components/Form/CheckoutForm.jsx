@@ -1,10 +1,12 @@
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import PropTypes from 'prop-types';
 import './CheckoutForm.css'
+import { useState } from 'react';
 
 const CheckoutForm = ({ closeModal }) => {
     const stripe = useStripe();
     const elements = useElements();
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -12,6 +14,25 @@ const CheckoutForm = ({ closeModal }) => {
         if (!stripe || !elements) {
             return;
         }
+
+        const card = elements.getElement(CardElement);
+        if (card === null) {
+            return;
+        }
+
+        const { error, paymentMethod } = await stripe.createPaymentMethod({
+            type: 'card',
+            card
+        })
+
+        if (error) {
+            console.log('payment Error: ', error);
+            setError(error.message)
+        } else {
+            console.log('paymentMethod: ', paymentMethod)
+            setError('')
+        }
+
     }
 
 
@@ -49,6 +70,10 @@ const CheckoutForm = ({ closeModal }) => {
                 >
                     No
                 </button>
+
+                {
+                    error && <p>{error}</p>
+                }
             </div>
         </form>
     );
