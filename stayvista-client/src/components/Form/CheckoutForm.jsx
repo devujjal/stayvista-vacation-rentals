@@ -10,6 +10,9 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
     const elements = useElements();
     const axiosSecure = useAxiosSecure();
     const [error, setError] = useState('');
+    const [clientSecret, setClientSecret] = useState("");
+    const [processing, setProcessing] = useState(false)
+
 
 
     useEffect(() => {
@@ -19,20 +22,27 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
             }
 
             try {
-                const { data } = axiosSecure.post('/some', totalPrice);
-                console.log(data)
+                const res = await axiosSecure.post('/create-payment-intent', { price: totalPrice });
+                console.log(res.data)
+                setClientSecret(res.data.clientSecret)
 
             } catch (error) {
-                toast.error(error.message)
+                toast.error(error.message || 'Failed to create payment intent');
             }
-        }
+        };
 
+        getClientSecret();
 
     }, [axiosSecure, totalPrice])
 
 
+    console.log(clientSecret)
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        setProcessing(true);
 
         if (!stripe || !elements) {
             return;
@@ -80,7 +90,7 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
 
             <div className='flex mt-2 justify-around'>
                 <button
-                    disabled={!stripe}
+                    disabled={!stripe || !clientSecret || processing}
                     type='submit'
                     className='inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2'
                 >

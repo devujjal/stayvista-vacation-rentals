@@ -4,8 +4,8 @@ require('dotenv').config()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const jwt = require('jsonwebtoken')
-
+const jwt = require('jsonwebtoken');
+const stripe = require('stripe')(process.env.STRIPE_SK_KEY);
 const port = process.env.PORT || 5000  //8000
 
 // middleware
@@ -22,7 +22,7 @@ app.use(cookieParser())
 // Verify Token Middleware
 const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token
-  console.log(token)
+  // console.log(token)
   if (!token) {
     return res.status(401).send({ message: 'unauthorized access' })
   }
@@ -281,6 +281,28 @@ async function run() {
         res.send(result)
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
+    app.post('/create-payment-intent', verifyToken, async (req, res) => {
+      try {
+        const price = req.body.price;
+        const totalAmount = parseFloat(price) * 100;
+        if (!price || totalAmount < 1) {
+          return;
+        }
+
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: totalAmount,
+          currency: 'usd',
+          payment_method_types: ['card']
+        })
+
+        res.send({ clientSecret: paymentIntent.client_secret })
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' })
       }
     })
 
