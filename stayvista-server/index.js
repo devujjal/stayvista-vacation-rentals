@@ -312,18 +312,19 @@ async function run() {
 
 
     //Update Room Status
-    app.patch('/room/status/:id', async (req, res) => {
+    app.patch('/room/status/:id', verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
+        const status = req.body.status;
         const filter = { _id: new ObjectId(id) };
         const updatedDoc = {
           $set: {
-            status: true
+            booked: status
           }
-        }
+        };
 
         const result = await rooms.updateOne(filter, updatedDoc);
-        res.send(result)
+        res.send(result);
 
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' })

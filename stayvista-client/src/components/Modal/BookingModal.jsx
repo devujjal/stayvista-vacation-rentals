@@ -14,7 +14,7 @@ import CheckoutForm from '../Form/CheckoutForm';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY);
 
-const BookingModal = ({ closeModal, isOpen, bookingInfo, totalPrice }) => {
+const BookingModal = ({ closeModal, isOpen, bookingInfo, totalPrice, refetch }) => {
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as='div' className='relative z-10' onClose={closeModal}>
@@ -78,7 +78,7 @@ const BookingModal = ({ closeModal, isOpen, bookingInfo, totalPrice }) => {
                                 <hr className='mt-8 ' />
                                 {/* checkout form */}
                                 <Elements stripe={stripePromise}>
-                                    <CheckoutForm closeModal={closeModal} totalPrice={totalPrice} bookingInfo={bookingInfo} />
+                                    <CheckoutForm closeModal={closeModal} totalPrice={totalPrice} bookingInfo={bookingInfo} refetch={refetch} />
                                 </Elements>
 
 
@@ -95,7 +95,8 @@ BookingModal.propTypes = {
     bookingInfo: PropTypes.object,
     closeModal: PropTypes.func,
     isOpen: PropTypes.bool,
-    totalPrice: PropTypes.number
+    totalPrice: PropTypes.number,
+    refetch: PropTypes.func,
 }
 
 export default BookingModal
