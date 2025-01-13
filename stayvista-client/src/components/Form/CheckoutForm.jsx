@@ -84,7 +84,7 @@ const CheckoutForm = ({ closeModal, totalPrice, bookingInfo, refetch }) => {
             setError(confirmError.message)
             return
         }
-
+ 
         if (paymentIntent.status === "succeeded") {
             console.log("From payment intent: ", paymentIntent);
 

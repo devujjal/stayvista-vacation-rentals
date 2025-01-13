@@ -2,14 +2,18 @@ import useAuth from '../../../hooks/useAuth'
 import { Helmet } from 'react-helmet-async'
 import useRole from '../../../hooks/useRole';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
+import UpdateProfile from '../../../components/Form/UpdateProfile';
+import { useState } from 'react';
 
 const Profile = () => {
     const { user, loading } = useAuth();
     const [role, isLoading] = useRole();
+    const [toggle, setToggle] = useState(false)
 
-    console.log(role)
 
-    console.log(user)
+    const closeModal = () => {
+        setToggle(false)
+    }
 
     if (loading || isLoading) {
         return <LoadingSpinner />
@@ -56,10 +60,13 @@ const Profile = () => {
                             </p>
 
                             <div>
-                                <button className='bg-[#F43F5E] px-10 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053] block mb-1'>
+                                <button
+                                    className='bg-[#F43F5E] px-10 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053] block mb-1'>
                                     Update Profile
                                 </button>
-                                <button className='bg-[#F43F5E] px-7 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053]'>
+                                <button
+                                    onClick={() => setToggle(true)}
+                                    className='bg-[#F43F5E] px-7 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053]'>
                                     Change Password
                                 </button>
                             </div>
@@ -67,6 +74,8 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+
+            <UpdateProfile toggle={toggle} closeModal={closeModal} />
         </div>
     )
 }
