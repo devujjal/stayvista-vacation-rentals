@@ -57,6 +57,7 @@ async function run() {
     const database = client.db('stayvista');
     const rooms = database.collection('rooms');
     const users = database.collection('users');
+    const bookings = database.collection('bookings');
 
 
     const verifyAdmin = async (req, res, next) => {
@@ -278,6 +279,20 @@ async function run() {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
         const result = await rooms.deleteOne(query);
+        res.send(result)
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
+    //Booking 
+    app.post('/bookings', verifyToken, async (req, res) => {
+      try {
+        const newBooking = req.body;
+        // Booking Saved in DB
+        const result = await bookings.insertOne(newBooking);
+        
         res.send(result)
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' });

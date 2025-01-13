@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAuth from '../../hooks/useAuth';
 
-const CheckoutForm = ({ closeModal, totalPrice }) => {
+const CheckoutForm = ({ closeModal, totalPrice, bookingInfo }) => {
     const stripe = useStripe();
     const elements = useElements();
     const { user } = useAuth();
@@ -35,9 +35,6 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
         getClientSecret();
 
     }, [axiosSecure, totalPrice])
-
-
-    console.log(clientSecret)
 
 
     const handleSubmit = async (e) => {
@@ -69,7 +66,6 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
         }
 
         // Confirm payment
-
         const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
                 card: card,
@@ -88,6 +84,37 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
 
         if (paymentIntent.status === "succeeded") {
             console.log('From payment intent: ', paymentIntent)
+
+            /* 
+            1. Create booksings info with object
+            2. Create API endpoint for it
+            3. fetch data in client and sent it
+            4. change room status while booking
+             */
+
+            const newBooking = {
+                roomID: bookingInfo?._id,
+                title: bookingInfo?.title,
+                host: bookingInfo?.host,
+                price: bookingInfo?.price,
+                from: bookingInfo?.from,
+                to: bookingInfo?.to,
+                transactionId: paymentIntent.id,
+                data: new Date()
+
+            }
+
+            console.log(newBooking)
+
+            const res = await axiosSecure.post('/bookings', newBooking)
+
+            if (res.data.insertedId) {
+                // 4. change room status while booking
+
+            }
+
+
+
         }
 
 
@@ -139,7 +166,8 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
 
 CheckoutForm.propTypes = {
     closeModal: PropTypes.func,
-    totalPrice: PropTypes.number
+    totalPrice: PropTypes.number,
+    bookingInfo: PropTypes.object
 }
 
 export default CheckoutForm;
