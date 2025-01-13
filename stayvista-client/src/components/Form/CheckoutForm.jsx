@@ -4,12 +4,14 @@ import './CheckoutForm.css'
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast'
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import useAuth from '../../hooks/useAuth';
 
 const CheckoutForm = ({ closeModal, totalPrice }) => {
     const stripe = useStripe();
     const elements = useElements();
+    const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
-    const [error, setError] = useState('');
+    const [errorShow, setError] = useState('');
     const [clientSecret, setClientSecret] = useState("");
     const [processing, setProcessing] = useState(false)
 
@@ -23,7 +25,6 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
 
             try {
                 const res = await axiosSecure.post('/create-payment-intent', { price: totalPrice });
-                console.log(res.data)
                 setClientSecret(res.data.clientSecret)
 
             } catch (error) {
@@ -61,10 +62,34 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
         if (error) {
             console.log('payment Error: ', error);
             setError(error.message)
+            return;
         } else {
             console.log('paymentMethod: ', paymentMethod)
             setError('')
         }
+
+        // Confirm payment
+
+        const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card,
+                billing_details: {
+                    name: user?.displayName,
+                    email: user?.email
+                }
+            }
+        })
+
+
+        if (confirmError) {
+            setError(confirmError.message)
+            return
+        }
+
+        if (paymentIntent.status === "succeeded") {
+            console.log('From payment intent: ', paymentIntent)
+        }
+
 
     }
 
@@ -105,7 +130,7 @@ const CheckoutForm = ({ closeModal, totalPrice }) => {
                 </button>
 
                 {
-                    error && <p>{error}</p>
+                    errorShow && <p>{errorShow}</p>
                 }
             </div>
         </form>
