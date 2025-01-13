@@ -286,16 +286,47 @@ async function run() {
     })
 
 
+
     //Booking 
     app.post('/bookings', verifyToken, async (req, res) => {
       try {
         const newBooking = req.body;
         // Booking Saved in DB
         const result = await bookings.insertOne(newBooking);
-        
+
+
+        // Rooms data status change (Optional, We will make it individually with Patch)
+        /* const query = { _id: new ObjectId(newBooking?.roomID) };
+        const updatedDoc = {
+          $set: {
+            status: true
+          }
+        }
+        const roomResult = await rooms.updateOne(query, updatedDoc) */
+
         res.send(result)
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
+    //Update Room Status
+    app.patch('/room/status/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const updatedDoc = {
+          $set: {
+            status: true
+          }
+        }
+
+        const result = await rooms.updateOne(filter, updatedDoc);
+        res.send(result)
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' })
       }
     })
 

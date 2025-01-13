@@ -107,11 +107,12 @@ const CheckoutForm = ({ closeModal, totalPrice, bookingInfo }) => {
             console.log(newBooking)
 
             const res = await axiosSecure.post('/bookings', newBooking)
+            console.log(res.data)
 
-            if (res.data.insertedId) {
+           /*  if (res.data.insertedId) {
                 // 4. change room status while booking
 
-            }
+            } */
 
 
 
