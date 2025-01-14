@@ -84,7 +84,7 @@ const CheckoutForm = ({ closeModal, totalPrice, bookingInfo, refetch }) => {
             setError(confirmError.message)
             return
         }
- 
+
         if (paymentIntent.status === "succeeded") {
             console.log("From payment intent: ", paymentIntent);
 
@@ -101,6 +101,13 @@ const CheckoutForm = ({ closeModal, totalPrice, bookingInfo, refetch }) => {
                 roomID: bookingInfo?._id,
                 title: bookingInfo?.title,
                 host: bookingInfo?.host,
+                image: bookingInfo?.image,
+                //guest mean who booking this room;
+                guest: {
+                    name: user?.displayName,
+                    email: user?.email,
+                    image: user?.photoURL
+                },
                 price: bookingInfo?.price,
                 from: bookingInfo?.from,
                 to: bookingInfo?.to,

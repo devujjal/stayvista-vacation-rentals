@@ -311,6 +311,20 @@ async function run() {
     })
 
 
+    app.get('/bookings/:email', verifyToken, async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { 'guest.email': email };
+        const cursor = bookings.find(query);
+        const result = await cursor.toArray();
+        res.send(result)
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
     //Update Room Status
     app.patch('/room/status/:id', verifyToken, async (req, res) => {
       try {
