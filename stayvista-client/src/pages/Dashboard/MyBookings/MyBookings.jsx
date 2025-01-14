@@ -10,7 +10,7 @@ const MyBookings = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    const { data: bookings = [], isError, error, isLoading } = useQuery({
+    const { data: bookings = [], isError, error, isLoading, refetch } = useQuery({
         queryKey: ['my-bookings'],
         queryFn: async () => {
             const res = await axiosSecure.get(`/bookings/${user?.email}`);
@@ -18,7 +18,7 @@ const MyBookings = () => {
         }
     })
 
-    
+
     if (isError) {
         return toast.error(error.message)
     }
@@ -86,6 +86,7 @@ const MyBookings = () => {
                                             <BookingDataRow
                                                 key={booking._id}
                                                 booking={booking}
+                                                refetch={refetch}
                                             />
                                         ))
                                     }

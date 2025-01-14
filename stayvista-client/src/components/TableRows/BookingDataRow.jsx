@@ -20,14 +20,21 @@ const BookingDataRow = ({ booking, refetch }) => {
             const response = await axiosSecure.delete(`/bookings/${id}`);
             return response.data;
         },
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             console.log(data)
+
+            if (data.deletedCount > 0) {
+                refetch();
+                toast.success('Booking Canceled');
+
+                 //   Change Room booked status back to false
+                await axiosSecure.patch(`/room/status/${booking?.roomID}`, { status: false })
+            }
         }
     })
 
 
     const handleDelete = async (id) => {
-        console.log(id)
         try {
             await mutateAsync(id)
         } catch (error) {
@@ -36,12 +43,9 @@ const BookingDataRow = ({ booking, refetch }) => {
     }
 
 
-    if (isError) {
-        return toast.error('Something went wrong')
-    }
-
 
     console.log(booking)
+
     return (
         <tr>
             <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
