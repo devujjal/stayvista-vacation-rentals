@@ -311,6 +311,7 @@ async function run() {
     })
 
 
+    // Get guest bookings data 
     app.get('/bookings/:email', verifyToken, async (req, res) => {
       try {
         const email = req.params.email;
@@ -319,6 +320,19 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result)
 
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
+    // Delete/Cancel guest bookings data
+    app.delete('/bookings/:id', verifyToken, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await bookings.deleteOne(query);
+        res.send(result);
       } catch (error) {
         res.status(500).send({ success: false, message: 'Internal Server Error' });
       }

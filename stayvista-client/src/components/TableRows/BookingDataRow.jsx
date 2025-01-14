@@ -14,7 +14,7 @@ const BookingDataRow = ({ booking, refetch }) => {
         setIsOpen(false)
     }
 
-    const { mutateAsync } = useMutation({
+    const { mutateAsync, isError } = useMutation({
         mutationFn: async() => {
             // const response = await axiosSecure.delete()
         }
