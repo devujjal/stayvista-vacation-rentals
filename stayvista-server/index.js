@@ -326,6 +326,20 @@ async function run() {
     })
 
 
+    //Get data for manage Bookings
+    app.get('/manage-bookings/:email', verifyToken, async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { 'host.email': email };
+        const cursor = bookings.find(query);
+        const result = await cursor.toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    })
+
+
     // Delete/Cancel guest bookings data
     app.delete('/bookings/:id', verifyToken, async (req, res) => {
       try {

@@ -21,7 +21,6 @@ const BookingDataRow = ({ booking, refetch }) => {
             return response.data;
         },
         onSuccess: async (data) => {
-            console.log(data)
 
             if (data.deletedCount > 0) {
                 refetch();
@@ -43,8 +42,6 @@ const BookingDataRow = ({ booking, refetch }) => {
     }
 
 
-
-    console.log(booking)
 
     return (
         <tr>
