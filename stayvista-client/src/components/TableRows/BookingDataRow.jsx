@@ -1,7 +1,29 @@
 import { format } from 'date-fns'
 import PropTypes from 'prop-types'
+import DeleteModal from '../Modal/DeleteModal'
+import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import useAxiosSecure from '../../hooks/useAxiosSecure'
 
 const BookingDataRow = ({ booking, refetch }) => {
+
+    const [isOpen, setIsOpen] = useState(false);
+    const axiosSecure = useAxiosSecure();
+
+    const closeModal = () => {
+        setIsOpen(false)
+    }
+
+    const { mutateAsync } = useMutation({
+        mutationFn: async() => {
+            // const response = await axiosSecure.delete()
+        }
+    })
+
+
+    const handleDelete = async (id) => {
+        console.log(id)
+    }
 
     console.log(booking)
     return (
@@ -54,13 +76,24 @@ const BookingDataRow = ({ booking, refetch }) => {
                 </p>
             </td>
             <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-                <span className='relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'>
+                <button
+                    onClick={() => setIsOpen(true)}
+                    className='relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'>
                     <span
                         aria-hidden='true'
                         className='absolute inset-0 bg-red-200 opacity-50 rounded-full'
                     ></span>
                     <span className='relative'>Cancel</span>
-                </span>
+                </button>
+
+                {/* Delete Modal */}
+                <DeleteModal
+                    isOpen={isOpen}
+                    closeModal={closeModal}
+                    handleDelete={handleDelete}
+                    id={booking?._id}
+                />
+
             </td>
         </tr>
     )
