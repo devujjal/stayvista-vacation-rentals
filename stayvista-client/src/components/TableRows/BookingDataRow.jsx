@@ -4,6 +4,7 @@ import DeleteModal from '../Modal/DeleteModal'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import useAxiosSecure from '../../hooks/useAxiosSecure'
+import toast from 'react-hot-toast'
 
 const BookingDataRow = ({ booking, refetch }) => {
 
@@ -14,16 +15,31 @@ const BookingDataRow = ({ booking, refetch }) => {
         setIsOpen(false)
     }
 
-    const { mutateAsync, isError } = useMutation({
-        mutationFn: async() => {
-            // const response = await axiosSecure.delete()
+    const { mutateAsync } = useMutation({
+        mutationFn: async (id) => {
+            const response = await axiosSecure.delete(`/bookings/${id}`);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            console.log(data)
         }
     })
 
 
     const handleDelete = async (id) => {
         console.log(id)
+        try {
+            await mutateAsync(id)
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
+
+
+    if (isError) {
+        return toast.error('Something went wrong')
+    }
+
 
     console.log(booking)
     return (
