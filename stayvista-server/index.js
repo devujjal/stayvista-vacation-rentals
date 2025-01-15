@@ -412,12 +412,15 @@ async function run() {
           }
         }).toArray();
 
+        // ChartData Calculation
         const chartData = dateStuff.map(booking => {
           const day = new Date(booking?.date).getDay();
           const month = new Date(booking?.date).getMonth() + 1;
           const data = [`${day}/${month}`, booking?.price]
           return data;
         })
+
+        chartData.unshift(['Day', 'Sales'])
 
 
         res.send({
