@@ -1,9 +1,16 @@
+import useRole from "../../hooks/useRole";
+import AdminStatistics from "../Dashboard/Statistics/AdminStatistics";
 
 const Statistics = () => {
+
+    const [role, isLoading] = useRole();
+
+    console.log(role)
+
     return (
-        <div>
-            <h1>Hello Statistics</h1>
-        </div>
+        <>
+            {role.role === 'admin' && <AdminStatistics />}
+        </>
     );
 };
 
