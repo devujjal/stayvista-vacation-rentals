@@ -3,7 +3,7 @@ import AdminStatistics from "../Dashboard/Statistics/AdminStatistics";
 
 const Statistics = () => {
 
-    const [role, isLoading] = useRole();
+    const [role] = useRole();
 
     console.log(role)
 

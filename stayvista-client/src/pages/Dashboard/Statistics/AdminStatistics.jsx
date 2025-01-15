@@ -48,7 +48,7 @@ const AdminStatistics = () => {
                                 Total Sales
                             </p>
                             <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                                $345
+                                ${staticsData?.totalSales[0]?.totalAmount}
                             </h4>
                         </div>
                     </div>
@@ -64,7 +64,7 @@ const AdminStatistics = () => {
                                 Total User
                             </p>
                             <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                                23
+                                {staticsData?.totalUsers}
                             </h4>
                         </div>
                     </div>
@@ -80,7 +80,7 @@ const AdminStatistics = () => {
                                 Total Bookings
                             </p>
                             <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                                345
+                                {staticsData?.totalBookings}
                             </h4>
                         </div>
                     </div>
@@ -96,7 +96,7 @@ const AdminStatistics = () => {
                                 Total Rooms
                             </p>
                             <h4 className='block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900'>
-                                454
+                                {staticsData?.totalRooms}
                             </h4>
                         </div>
                     </div>
@@ -106,7 +106,7 @@ const AdminStatistics = () => {
                     {/* Total Sales Graph */}
                     <div className='relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2'>
                         {/* Render Chart Here */}
-                        <AdminChart />
+                        <AdminChart data={staticsData?.chartData} />
                     </div>
                     {/* Calender */}
                     <div className='relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden'>

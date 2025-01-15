@@ -393,7 +393,7 @@ async function run() {
 
 
     //Admin Statics
-    app.get('/admin-statistics', async (req, res) => {
+    app.get('/admin-statistics', verifyToken, verifyAdmin,  async (req, res) => {
       try {
         const totalSales = await bookings.aggregate([
           {
