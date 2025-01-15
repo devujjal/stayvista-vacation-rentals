@@ -77,6 +77,24 @@ async function run() {
     }
 
 
+    //host verify
+    const verifyHost = async (req, res, next) => {
+      try {
+        const email = req.user?.email;
+        const query = { email: email };
+        const user = await users.findOne(query);
+        if (!user || user?.role !== 'host') {
+          return res.status(401).send({ message: 'Unauthorize Access!' })
+        }
+
+        next();
+
+      } catch (error) {
+        res.status(500).send({ message: 'Internal Server Error' });
+      }
+    }
+
+
     // auth related api
     app.post('/jwt', async (req, res) => {
       const user = req.body
@@ -327,7 +345,7 @@ async function run() {
 
 
     //Get data for manage Bookings
-    app.get('/manage-bookings/:email', verifyToken, async (req, res) => {
+    app.get('/manage-bookings/:email', verifyToken, verifyHost, async (req, res) => {
       try {
         const email = req.params.email;
         const query = { 'host.email': email };
@@ -374,6 +392,52 @@ async function run() {
     })
 
 
+    //Admin Statics
+    app.get('/admin-statistics', async (req, res) => {
+      try {
+        const totalSales = await bookings.aggregate([
+          {
+            $group: { _id: null, totalAmount: { $sum: '$price' } }
+          }
+        ]).toArray();
+
+        // can be used countDocuments();
+        const totalUsers = await users.estimatedDocumentCount();
+        const totalBookings = await bookings.estimatedDocumentCount();
+        const totalRooms = await rooms.estimatedDocumentCount()
+
+        const dateStuff = await bookings.find({}, {
+          projection: {
+            price: 1, date: 1
+          }
+        }).toArray();
+
+        const chartData = dateStuff.map(booking => {
+          const day = new Date(booking?.date).getDay();
+          const month = new Date(booking?.date).getMonth() + 1;
+          const data = [`${day}/${month}`, booking?.price]
+          return data;
+        })
+
+
+        res.send({
+          totalUsers,
+          totalBookings,
+          totalRooms,
+          totalSales,
+          chartData
+
+        })
+
+
+      } catch (error) {
+        res.status(500).send({ success: false, message: 'Internal Server Error' })
+      }
+    })
+
+
+
+    // Create Payment intent
     app.post('/create-payment-intent', verifyToken, async (req, res) => {
       try {
         const price = req.body.price;
