@@ -1,10 +1,36 @@
-import { Calendar } from 'react-date-range'
-import { FaUserAlt, FaDollarSign } from 'react-icons/fa'
-import { BsFillCartPlusFill, BsFillHouseDoorFill } from 'react-icons/bs'
-import AdminChart from '../../../components/Chart/AdminChart'
+import { Calendar } from 'react-date-range';
+import { useQuery } from '@tanstack/react-query';
+import { FaUserAlt, FaDollarSign } from 'react-icons/fa';
+import { BsFillCartPlusFill, BsFillHouseDoorFill } from 'react-icons/bs';
+import AdminChart from '../../../components/Chart/AdminChart';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import toast from 'react-hot-toast'
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 
 const AdminStatistics = () => {
     // Fetch Admin Stat Data here
+
+    const axiosSecure = useAxiosSecure();
+
+    const { data: staticsData = {}, isError, error, isLoading } = useQuery({
+        queryKey: ['staticsData'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/admin-statistics');
+            return res.data;
+        }
+    })
+
+    if (isError) {
+        return toast.error(error.message)
+    }
+
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+    console.log(staticsData)
+
+
     return (
         <div>
             <div className='mt-12'>
